@@ -21,7 +21,7 @@
 //analog read pin
 #define CHANNEL A0
 
-q15_t analog_signal_data[DATA_SIZE];
+q15_t analog_signal_data[SAMPLE_SIZE];
 
 // the setup routine runs once when you press reset:
 void setup() {
@@ -56,7 +56,7 @@ void run_fft(unsigned sample_count)
     ZeroFFT(analog_signal_data, sample_count);
 
   //data is only meaningful up to sample rate/2, discard the other half
-  for(int i=0; i<DATA_SIZE/2; i++){
+  for(int i=0; i<SAMPLE_SIZE/2; i++){
     
     //print the frequency
     Serial.print(FFT_BIN(i, SAMPLING_RATE, sample_count));
@@ -76,7 +76,7 @@ void run_fft(unsigned sample_count)
 
   if(USE_HARD_CODED_DATA){
     // iterate through the FFT bins to find the dominant frequency
-    for(int i=0; i<DATA_SIZE/2; i++) {
+    for(int i=0; i<SAMPLE_SIZE/2; i++) {
         if(hard_coded_signal_data[i] > max_amplitude) {
             max_amplitude = hard_coded_signal_data[i];
             dominant_frequency = FFT_BIN(i, SAMPLING_RATE, sample_count);
@@ -87,7 +87,7 @@ void run_fft(unsigned sample_count)
   } else{
 
     // iterate through the FFT bins to find the dominant frequency
-    for(int i=0; i<DATA_SIZE/2; i++) {
+    for(int i=0; i<SAMPLE_SIZE/2; i++) {
         if(analog_signal_data[i] > max_amplitude) {
             max_amplitude = analog_signal_data[i];
             dominant_frequency = FFT_BIN(i, SAMPLING_RATE, sample_count);
