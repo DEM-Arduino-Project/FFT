@@ -66,6 +66,22 @@ void setup() {
     Serial.print(dominant_frequency);
     Serial.println(" Hz");
     }
+    else{
+    float max_amplitude = 0;
+    float dominant_frequency = 0;
+
+    // iterate through the FFT bins to find the dominant frequency
+    for(int i=0; i<DATA_SIZE/2; i++) {
+        if(analog_signal_data[i] > max_amplitude) {
+            max_amplitude = analog_signal_data[i];
+            dominant_frequency = FFT_BIN(i, SAMPLING_RATE, DATA_SIZE);
+        }
+    }
+
+    Serial.print("Dominant frequency: ");
+    Serial.print(dominant_frequency);
+    Serial.println(" Hz");
+    }
 }
 
 void loop() {
