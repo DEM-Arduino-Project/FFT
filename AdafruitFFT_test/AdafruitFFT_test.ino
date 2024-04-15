@@ -21,12 +21,12 @@
 
 #define USE_HARD_CODED_DATA 1
 
-int analog_signal_data[DATA_SIZE];
+q15_t analog_signal_data[DATA_SIZE];
 
 // the setup routine runs once when you press reset:
 void setup() {
 
-  Serial.begin(115200);
+  Serial.begin(9600);
   while(!Serial); //wait for serial to be ready
 
   //run the FFT
@@ -49,6 +49,23 @@ void setup() {
       Serial.println(analog_signal_data[i]);
     
   }
+
+  if(USE_HARD_CODED_DATA){
+    float max_amplitude = 0;
+    float dominant_frequency = 0;
+
+    // iterate through the FFT bins to find the dominant frequency
+    for(int i=0; i<DATA_SIZE/2; i++) {
+        if(hard_coded_signal_data[i] > max_amplitude) {
+            max_amplitude = hard_coded_signal_data[i];
+            dominant_frequency = FFT_BIN(i, SAMPLING_RATE, DATA_SIZE);
+        }
+    }
+
+    Serial.print("Dominant frequency: ");
+    Serial.print(dominant_frequency);
+    Serial.println(" Hz");
+    }
 }
 
 void loop() {
