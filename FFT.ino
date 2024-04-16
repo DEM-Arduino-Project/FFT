@@ -1,4 +1,107 @@
-/* This example shows the most basic usage of the Adafruit ZeroFFT library.
+
+
+
+/*
+#include "arduinoFFT.h"
+
+
+// These values can be changed in order to evaluate the functions
+
+#define CHANNEL A0
+const uint16_t samples = 512; //This value MUST ALWAYS be a power of 2
+const float samplingFrequency = 100; //Hz, must be less than 10000 due to ADC
+unsigned int sampling_period_us;
+unsigned long microseconds;
+
+
+// These are the input and output vectors / Input vectors receive computed results from FFT
+float vReal[samples];
+float vImag[samples];
+
+// Create FFT object with weighing factor storage 
+ArduinoFFT<float> FFT = ArduinoFFT<float>(vReal, vImag, samples, samplingFrequency, true);
+
+#define SCL_INDEX 0x00
+#define SCL_TIME 0x01
+#define SCL_FREQUENCY 0x02
+#define SCL_PLOT 0x03
+
+void setup()
+{
+  sampling_period_us = round(1000000*(1.0/samplingFrequency));
+  Serial.begin(9600);
+  Serial.println("Ready");
+}
+
+void loop()
+{
+  // SAMPLING
+  microseconds = micros();
+  for(int i=0; i<samples; i++)
+  {
+      vReal[i] = (analogRead(CHANNEL) + 0.5) * (5.0 / 1023);
+      vImag[i] = 0;
+      while(micros() - microseconds < sampling_period_us){
+        //empty loop
+      }
+      microseconds += sampling_period_us;
+  }
+  // Print the results of the sampling according to time 
+  Serial.println("Data:");
+  PrintVector(vReal, samples, SCL_TIME);
+  FFT.windowing(FFTWindow::Hamming, FFTDirection::Forward);	// Weigh data 
+  Serial.println("Weighed data:");
+  PrintVector(vReal, samples, SCL_TIME);
+  FFT.compute(FFTDirection::Forward); // Compute FFT 
+  Serial.println("Computed Real values:");
+  PrintVector(vReal, samples, SCL_INDEX);
+  Serial.println("Computed Imaginary values:");
+  PrintVector(vImag, samples, SCL_INDEX);
+  FFT.complexToMagnitude(); // Compute magnitudes 
+  //Serial.println("Computed magnitudes:");
+  //PrintVector(vReal, (samples >> 1), SCL_FREQUENCY);
+  float x = FFT.majorPeak();
+  Serial.println(x, 6); //Print out what frequency is the most dominant.
+  while(1); // Run Once 
+  // delay(2000); // Repeat after delay
+}
+
+void PrintVector(float *vData, uint16_t bufferSize, uint8_t scaleType)
+{
+  for (uint16_t i = 0; i < bufferSize; i++)
+  {
+    float abscissa;
+    // Print abscissa value
+    switch (scaleType)
+    {
+      case SCL_INDEX:
+        abscissa = (i * 1.0);
+	break;
+      case SCL_TIME:
+        abscissa = ((i * 1.0) / samplingFrequency);
+	break;
+      case SCL_FREQUENCY:
+        abscissa = ((i * 1.0 * samplingFrequency) / samples);
+	break;
+    }
+    Serial.print(abscissa, 6);
+    if(scaleType==SCL_FREQUENCY)
+      Serial.print("Hz");
+    Serial.print(" ");
+    Serial.println(vData[i], 4);
+  }
+  Serial.println();
+}
+
+
+
+*/
+
+
+
+
+/*
+ This example shows the most basic usage of the Adafruit ZeroFFT library.
  * it calculates the FFT and prints out the results along with their corresponding frequency
  * 
  * The signal.h file constains a 200hz sine wave mixed with a weaker 800hz sine wave.
@@ -8,7 +111,7 @@
  * the serial plotter tool to see a graph.
  */
 
-#include "Adafruit_ZeroFFT.h"
+#include <Adafruit_ZeroFFT.h>
 #include "signal.h"
 
 //the signal in signal.h has 2048 samples. Set this to a value between 16 and 2048 inclusive.
@@ -17,7 +120,7 @@
 //the sample rate
 #define SAMPLING_RATE 8000
 //use the existing data
-#define USE_HARD_CODED_DATA 1
+#define USE_HARD_CODED_DATA 0
 //analog read pin
 #define CHANNEL A0
 
@@ -33,8 +136,10 @@ void loop() {
   
   if(!USE_HARD_CODED_DATA)
     read_signal_data(SAMPLE_SIZE);
+
   run_fft(SAMPLE_SIZE);
-  delay(1000);
+
+  delay(5000);
 }
 
 void read_signal_data(unsigned sample_count)
@@ -42,8 +147,10 @@ void read_signal_data(unsigned sample_count)
   for(int i=0; i<sample_count; i++)
   {
     // read data from pin A0
-    int sensor_read = analogRead(CHANNEL);
-    analog_signal_data[i] = (sensor_read + 0.5) * (5.0 / 1023.0);
+    analog_signal_data[i] = analogRead(CHANNEL);
+    float voltage = (analog_signal_data[i] + 0.5) * (5.0 / 1023.0);
+    
+    //Serial.println(voltage);
   }
 }
 
@@ -99,4 +206,3 @@ void run_fft(unsigned sample_count)
     Serial.print(dominant_frequency);
     Serial.println(" Hz");
 }
-
