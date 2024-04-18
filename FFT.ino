@@ -118,9 +118,9 @@ void PrintVector(float *vData, uint16_t bufferSize, uint8_t scaleType)
 //this must be a power of 2
 #define SAMPLE_SIZE 256
 //the sample rate
-#define SAMPLING_RATE 8000
+#define SAMPLING_RATE 80
 //use the existing data
-#define USE_HARD_CODED_DATA 0
+#define USE_HARD_CODED_DATA 1
 //analog read pin
 #define CHANNEL A0
 
@@ -133,11 +133,12 @@ void setup() {
 }
 
 void loop() {
-  
   if(!USE_HARD_CODED_DATA)
     read_signal_data(SAMPLE_SIZE);
 
   run_fft(SAMPLE_SIZE);
+  if(USE_HARD_CODED_DATA)
+    while(1);
 
   delay(5000);
 }

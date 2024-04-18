@@ -25,22 +25,24 @@ byte sine_data [91]=
 float f_peaks[5]; // top 5 frequencies peaks in descending order
 //---------------------------------------------------------------------------//
 
+int data[13]={1,2,4,8,16,32,64,128,256,512,1024,2048};
+
 
 void setup() 
         {
-        Serial.begin(250000);           
+        Serial.begin(9600);           
         }
 
         
 void loop() {
 
-/*
+
 //example
-FFT(data,64,100);        //to get top five value of frequencies of X having 64 sample at 100Hz sampling
-Serial.println(f_peaks[0]);
-Serial.println(f_peaks[1]);
-delay(99999);
-*/
+  FFT(data,64,100);        //to get top five value of frequencies of X having 64 sample at 100Hz sampling
+  Serial.println(f_peaks[0]);
+  Serial.println(f_peaks[1]);
+  delay(99999);
+
 
 
 /* 
@@ -72,7 +74,7 @@ Contact: abhilashpatel121@gmail.com
 Documentation:https://www.instructables.com/member/abhilash_patel/instructables/
 */
 
-unsigned int data[13]={1,2,4,8,16,32,64,128,256,512,1024,2048};
+
 int a,c1,f,o,x;
 a=N;  
                                  
@@ -153,11 +155,11 @@ Serial.print(out_im[i]); Serial.println("i");
         {
          out_r[i]=sqrt(out_r[i]*out_r[i]+out_im[i]*out_im[i]); // to  increase the speed delete sqrt
          out_im[i]=i*Frequency/N;
-         /*
+         
          Serial.print(out_im[i]); Serial.print("Hz");
          Serial.print("\t");                            // un comment to print freuency bin    
          Serial.println(out_r[i]); 
-         */    
+           
         }
 
 
