@@ -18,7 +18,7 @@
 //the sample rate
 #define SAMPLING_RATE 80
 //use the existing data
-#define USE_HARD_CODED_DATA 1
+#define USE_HARD_CODED_DATA 0
 //analog read pin
 #define CHANNEL A0
 
@@ -49,7 +49,7 @@ void read_signal_data(unsigned sample_count)
     analog_signal_data[i] = analogRead(CHANNEL);
     float voltage = (analog_signal_data[i] + 0.5) * (5.0 / 1023.0);
     
-    //Serial.println(voltage);
+    Serial.println(voltage);
   }
 }
 
